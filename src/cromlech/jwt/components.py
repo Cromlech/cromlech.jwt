@@ -26,16 +26,27 @@ class ExpiredToken(TokenException):
     def __str__(self):
         return "Token %r is expired." % self.token
 
-    
+
+class InvalidPayload(Exception):
+    pass
+
+
 class JWTHandler(object):
 
     def __init__(self, auto_timeout=None):
         self.auto_timeout = auto_timeout
 
+    @staticmethod
+    def generate_uid():
+        return str(uuid.uuid4())
+        
     def create_payload(self, **data):
-        tid = uuid.uuid4()
+        if self.auto_timeout is None and 'exp' in data:
+            # No self-deprecation allowed.
+            raise InvalidPayload('Expiration is not allowed.')
+
         payload = {
-            'uid': str(tid),
+            'uid': self.generate_uid(),
         }
         if self.auto_timeout is not None:
             exp = get_posix_timestamp(
@@ -86,8 +97,8 @@ class JWTService(object):
 
     def __init__(self, key, handler, lifetime=60, auto_deprecate=True):
         self.key = key
-        self.lifetime = lifetime
-        self.auto_deprecation = auto_deprecate and lifetime or None        
+        self.lifetime = lifetime  # Lifetime might be used in store or refresh
+        self.auto_deprecation = auto_deprecate and lifetime or None
         self.handler = handler(auto_timeout=self.auto_deprecation)
 
     def check_data(self, payload):

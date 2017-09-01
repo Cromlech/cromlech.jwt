@@ -4,12 +4,26 @@ JSON WEB Tokens for Cromlech
 Prerequisite
 ============
 
+In order to use the cryptographic capabilities, we create a cryptographic key.
+This key needs to be store, in order to be reused in your app. Make sure it's
+stored in a safe place as the tokens rely on this to be considered "secure".
+
   >>> from cromlech.jwt.components import JWTHandler
   >>> key = JWTHandler.generate_key()
+
+Read more here : http://jwcrypto.readthedocs.io.
+Key generation options available : key type, size.
 
 
 Handler
 =======
+
+The handler class is the carrier of the first layer of utilities.
+A handler instance can be configured to generate self-deprecating tokens.
+
+By default, tokens have no expiration. Token with no expirations can be
+stored and managed in your own application layer, implementing your own
+timeout mechanism.
 
   >>> handler = JWTHandler()
   >>> data = {"user": "Cromlech User"}
@@ -17,14 +31,27 @@ Handler
   >>> sorted(payload.items())
   [('uid', '...'), ('user', 'Cromlech User')]
 
+
+Configuring the timeout triggers the creation of an expiration time.
+The timeout is an integer representing the lifespan in minutes.
+
   >>> handler = JWTHandler(auto_timeout=60)
   >>> payload = handler.create_payload(**data)
   >>> sorted(payload.items())
   [('exp', ...), ('uid', '...'), ('user', 'Cromlech User')]
 
+Note that an UID attribute is created by default. The base policy is to create
+an UID based on UUID (uuid4 here). You can override that method easily in a
+subclass.
+
 
 Service
 =======
+
+The service class provides a wrapper around a handler to ease the common
+operations. It allows you to configure a handler, generate and authenticate.
+Furthermore, it has a skeleton structure to store and refresh, if you wish
+to create your own token policy.
 
   >>> from cromlech.jwt.components import JWTService
   >>> service = JWTService(key, JWTHandler)
@@ -68,3 +95,16 @@ This way, we create an intentionally deprecated token to test:
   >>> from cromlech.jwt.components import ExpiredToken
   >>> with pytest.raises(ExpiredToken):
   ...     token_data = handler.decrypt_and_verify(key, token)
+
+Note that, if your handler is not configured for self-deprecation, adding
+an expiration date on your payload will generate an error:
+
+  >>> service = JWTService(key, JWTHandler, auto_deprecate=False)
+  >>> deprecated = get_posix_timestamp(expiration_date(60))
+  >>> data = {"user": "Cromlech User", "exp": deprecated}
+  >>> from cromlech.jwt.components import InvalidPayload
+  >>> with pytest.raises(InvalidPayload) as payload_error:
+  ...     token = service.generate(data)
+
+  >>> payload_error.value
+  InvalidPayload('Expiration is not allowed.',)
