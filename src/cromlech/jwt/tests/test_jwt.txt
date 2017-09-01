@@ -1,0 +1,26 @@
+JSON WEB Tokens for Cromlech
+****************************
+
+Prerequisite
+============
+
+  >>> from cromlech.jwt.components import JWTHandler
+  >>> key = JWTHandler.generate_key()
+
+
+Handler
+=======
+
+  >>> from cromlech.jwt.components import JWTHandler
+  >>> handler = WTHandler()
+  >>> payload = {"user": "Cromlech User"}
+  >>> handler.create_payload(**payload)
+
+
+
+Service
+=======
+
+
+  >>> from cromlech.jwt.components import JWTService
+  >>> service = JWTService()
