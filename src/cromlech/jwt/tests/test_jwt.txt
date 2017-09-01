@@ -5,8 +5,8 @@ Prerequisite
 ============
 
 In order to use the cryptographic capabilities, we create a cryptographic key.
-This key needs to be store, in order to be reused in your app. Make sure it's
-stored in a safe place as the tokens rely on this to be considered "secure".
+This key needs to be stored in order to be reused in your app. Make sure it's
+stored in a safe place as tokens rely on this to be considered "secure".
 
   >>> from cromlech.jwt.components import JWTHandler
   >>> key = JWTHandler.generate_key()
@@ -21,9 +21,9 @@ Handler
 The handler class is the carrier of the first layer of utilities.
 A handler instance can be configured to generate self-deprecating tokens.
 
-By default, tokens have no expiration. Token with no expirations can be
+By default, tokens have no expiration. Tokens with no expiration date can be
 stored and managed in your own application layer, implementing your own
-timeout mechanism.
+timeout mechanism and policy.
 
   >>> handler = JWTHandler()
   >>> data = {"user": "Cromlech User"}
