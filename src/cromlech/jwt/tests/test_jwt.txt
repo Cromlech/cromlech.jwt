@@ -11,16 +11,60 @@ Prerequisite
 Handler
 =======
 
-  >>> from cromlech.jwt.components import JWTHandler
-  >>> handler = WTHandler()
-  >>> payload = {"user": "Cromlech User"}
-  >>> handler.create_payload(**payload)
+  >>> handler = JWTHandler()
+  >>> data = {"user": "Cromlech User"}
+  >>> payload = handler.create_payload(**data)
+  >>> sorted(payload.items())
+  [('uid', '...'), ('user', 'Cromlech User')]
 
+  >>> handler = JWTHandler(auto_timeout=60)
+  >>> payload = handler.create_payload(**data)
+  >>> sorted(payload.items())
+  [('exp', ...), ('uid', '...'), ('user', 'Cromlech User')]
 
 
 Service
 =======
 
-
   >>> from cromlech.jwt.components import JWTService
-  >>> service = JWTService()
+  >>> service = JWTService(key, JWTHandler)
+  >>> service.handler.auto_timeout
+  60
+
+  >>> token = service.generate(data)
+  >>> assert isinstance(token, str)
+
+  >>> import json
+  >>> token_data = handler.decrypt_and_verify(key, token)
+  >>> sorted(json.loads(token_data).items())
+  [('exp', ...), ('uid', '...'), ('user', 'Cromlech User')]
+
+  >>> auth_data = service.authenticate(token)
+  >>> sorted(auth_data.items())
+  [('exp', ...), ('uid', '...'), ('user', 'Cromlech User')]
+
+  >>> import pytest
+  >>> from cromlech.jwt.components import InvalidToken
+  >>> with pytest.raises(InvalidToken) as invalid:
+  ...     service.authenticate(token + 'some_altering_data')
+
+
+We can override the payload auto-generated data, to gain flexibility:
+
+  >>> data = {"user": "Cromlech User", "uid": "My Own ID"}
+  >>> token = service.generate(data)
+  >>> token_data = handler.decrypt_and_verify(key, token)
+  >>> sorted(json.loads(token_data).items())
+  [('exp', ...), ('uid', 'My Own ID'), ('user', 'Cromlech User')]
+
+
+This way, we create an intentionally deprecated token to test:
+
+  >>> from cromlech.jwt.utils import get_posix_timestamp, expiration_date
+  >>> deprecated = get_posix_timestamp(expiration_date(-60))
+  >>> data = {"user": "Cromlech User", "exp": deprecated}
+  >>> token = service.generate(data)
+
+  >>> from cromlech.jwt.components import ExpiredToken
+  >>> with pytest.raises(ExpiredToken):
+  ...     token_data = handler.decrypt_and_verify(key, token)
