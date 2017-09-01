@@ -32,13 +32,17 @@ class InvalidPayload(Exception):
 
 class JWTHandler(object):
 
-    def __init__(self, auto_timeout=None):
-        self.auto_timeout = auto_timeout
-
     @staticmethod
     def generate_uid():
         return str(uuid.uuid4())
-        
+
+    @staticmethod
+    def generate_key(ktype='oct', size=256):
+        return jwk.JWK.generate(kty=ktype, size=size)
+
+    def __init__(self, auto_timeout=None):
+        self.auto_timeout = auto_timeout
+
     def create_payload(self, **data):
         if self.auto_timeout is None and 'exp' in data:
             # No self-deprecation allowed.
@@ -54,10 +58,6 @@ class JWTHandler(object):
 
         payload.update(data)
         return payload
-
-    @staticmethod
-    def generate_key(ktype='oct', size=256):
-        return jwk.JWK.generate(kty=ktype, size=size)
 
     def create_signed_token(self, key, payload, alg="HS256"):
         """Return an unserialized signed token. 
