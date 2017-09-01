@@ -12,7 +12,7 @@ class TokenException(Exception):
 
     def __init__(self, token):
         self.token = token
-    
+
 
 class InvalidToken(TokenException):
 
@@ -110,7 +110,7 @@ class JWTService(object):
     def retrieve(self, *args):
         raise NotImplementedError(
             'Please override this method in a subclass.')
-    
+
     def generate(self, data):
         payload = self.handler.create_payload(**data)
         token = self.handler.create_encrypted_signed_token(self.key, payload)
