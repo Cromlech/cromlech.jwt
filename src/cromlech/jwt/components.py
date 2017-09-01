@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import uuid
-import json
 from .utils import get_posix_timestamp, expiration_date
-from jwcrypto import jwk, jws, jwt
-from jwcrypto.common import json_encode, json_decode
+from jwcrypto import jwk, jwt
+from jwcrypto.common import json_decode
 from jwcrypto.jwe import InvalidJWEData
 from jwcrypto.jwt import JWTExpired
 
@@ -134,7 +133,7 @@ class JWTService(object):
             raise InvalidToken(token)
 
         if payload: 
-            data = json.loads(payload)
+            data = json_decode(payload)
             if self.check_data(data) == True:
                 return data
 
