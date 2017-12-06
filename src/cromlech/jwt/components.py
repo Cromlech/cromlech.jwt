@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import uuid
+import json
 from .utils import get_posix_timestamp, expiration_date
 from jwcrypto import jwk, jwt
 from jwcrypto.common import json_decode
@@ -39,6 +40,12 @@ class JWTHandler(object):
     @staticmethod
     def generate_key(ktype='oct', size=256):
         return jwk.JWK.generate(kty=ktype, size=size)
+
+    @staticmethod
+    def load_key_file(path):
+        with open(path, 'r') as keyfile:
+            data = json.loads(keyfile.read())
+        return jwk.JWK(**data)
 
     def __init__(self, auto_timeout=None):
         self.auto_timeout = auto_timeout
@@ -121,7 +128,7 @@ class JWTService(object):
         raise NotImplementedError(
             'Please override this method in a subclass.')
 
-    def authenticate(self, token):
+    def check_token(self, token):
         """Returns a Principal object if credentials are valid
         """
         if token is None:
@@ -132,7 +139,7 @@ class JWTService(object):
         except InvalidJWEData:
             raise InvalidToken(token)
 
-        if payload: 
+        if payload:
             data = json_decode(payload)
             if self.check_data(data) == True:
                 return data
