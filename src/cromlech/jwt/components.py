@@ -42,10 +42,15 @@ class JWTHandler(object):
         return jwk.JWK.generate(kty=ktype, size=size)
 
     @staticmethod
+    def load_key_string(string):
+        data = json.loads(string)
+        return jwk.JWK(**data)
+
+    @staticmethod
     def load_key_file(path):
         with open(path, 'r') as keyfile:
-            data = json.loads(keyfile.read())
-        return jwk.JWK(**data)
+            keystr = keyfile.read()
+        return self.load_key_string(keystr)
 
     def __init__(self, auto_timeout=None):
         self.auto_timeout = auto_timeout

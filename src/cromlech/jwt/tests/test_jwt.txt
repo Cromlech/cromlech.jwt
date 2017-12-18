@@ -66,14 +66,14 @@ to create your own token policy.
   >>> sorted(json.loads(token_data).items())
   [('exp', ...), ('uid', '...'), ('user', 'Cromlech User')]
 
-  >>> auth_data = service.authenticate(token)
+  >>> auth_data = service.check_token(token)
   >>> sorted(auth_data.items())
   [('exp', ...), ('uid', '...'), ('user', 'Cromlech User')]
 
   >>> import pytest
   >>> from cromlech.jwt.components import InvalidToken
   >>> with pytest.raises(InvalidToken) as invalid:
-  ...     service.authenticate(token + 'some_altering_data')
+  ...     service.check_token(token + 'some_altering_data')
 
 
 We can override the payload auto-generated data, to gain flexibility:
