@@ -50,7 +50,7 @@ class JWTHandler(object):
     def load_key_file(path):
         with open(path, 'r') as keyfile:
             keystr = keyfile.read()
-        return self.load_key_string(keystr)
+        return JWTHandler.load_key_string(keystr)
 
     def __init__(self, auto_timeout=None):
         self.auto_timeout = auto_timeout
