@@ -50,6 +50,7 @@ class JWTHandler(object):
     def load_key_file(path):
         with open(path, 'r') as keyfile:
             keystr = keyfile.read()
+        import pdb;pdb.set_trace()
         return self.load_key_string(keystr)
 
     def __init__(self, auto_timeout=None):
