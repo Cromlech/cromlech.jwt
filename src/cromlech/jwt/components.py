@@ -38,19 +38,19 @@ class JWTHandler(object):
         return str(uuid.uuid4())
 
     @staticmethod
-    def generate_key(ktype='oct', size=256):
-        return jwk.JWK.generate(kty=ktype, size=size)
+    def generate_key(kty='oct', size=256):
+        return jwk.JWK.generate(kty=kty, size=size)
 
     @staticmethod
-    def load_key_string(string):
-        data = json.loads(string)
-        return jwk.JWK(**data)
+    def dump_key(key):
+        """The result of the export is a JSON string
+        """
+        return key.export()
 
     @staticmethod
-    def load_key_file(path):
-        with open(path, 'r') as keyfile:
-            keystr = keyfile.read()
-        return self.load_key_string(keystr)
+    def load_key(key_string):
+        key_data = json.loads(key_string)
+        return jwk.JWK(**key_data)
 
     def __init__(self, auto_timeout=None):
         self.auto_timeout = auto_timeout

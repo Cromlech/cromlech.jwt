@@ -14,6 +14,11 @@ stored in a safe place as tokens rely on this to be considered "secure".
 Read more here : http://jwcrypto.readthedocs.io.
 Key generation options available : key type, size.
 
+You can load a key from the key value and the type :
+
+  >>> key_string = JWTHandler.dump_key(key)
+  >>> key = JWTHandler.load_key(key_string)
+
 
 Handler
 =======
