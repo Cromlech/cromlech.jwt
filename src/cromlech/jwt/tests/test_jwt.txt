@@ -33,7 +33,7 @@ timeout mechanism and policy.
   >>> handler = JWTHandler()
   >>> data = {"user": "Cromlech User"}
   >>> payload = handler.create_payload(**data)
-  >>> sorted(payload.items())
+  >>> sorted(payload.items())  # doctest: +ALLOW_UNICODE
   [('uid', '...'), ('user', 'Cromlech User')]
 
 
@@ -42,7 +42,7 @@ The timeout is an integer representing the lifespan in minutes.
 
   >>> handler = JWTHandler(auto_timeout=60)
   >>> payload = handler.create_payload(**data)
-  >>> sorted(payload.items())
+  >>> sorted(payload.items())  # doctest: +ALLOW_UNICODE
   [('exp', ...), ('uid', '...'), ('user', 'Cromlech User')]
 
 Note that an UID attribute is created by default. The base policy is to create
@@ -69,11 +69,11 @@ to create your own token policy.
 
   >>> import json
   >>> token_data = handler.decrypt_and_verify(key, token)
-  >>> sorted(json.loads(token_data).items())
+  >>> sorted(json.loads(token_data).items())  # doctest: +ALLOW_UNICODE
   [('exp', ...), ('uid', '...'), ('user', 'Cromlech User')]
 
   >>> auth_data = service.check_token(token)
-  >>> sorted(auth_data.items())
+  >>> sorted(auth_data.items())  # doctest: +ALLOW_UNICODE
   [('exp', ...), ('uid', '...'), ('user', 'Cromlech User')]
 
   >>> import pytest
@@ -87,7 +87,7 @@ We can override the payload auto-generated data, to gain flexibility:
   >>> data = {"user": "Cromlech User", "uid": "My Own ID"}
   >>> token = service.generate(data)
   >>> token_data = handler.decrypt_and_verify(key, token)
-  >>> sorted(json.loads(token_data).items())
+  >>> sorted(json.loads(token_data).items())  # doctest: +ALLOW_UNICODE
   [('exp', ...), ('uid', 'My Own ID'), ('user', 'Cromlech User')]
 
 
