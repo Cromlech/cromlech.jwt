@@ -5,11 +5,18 @@ from setuptools import setup, find_packages
 
 version = "0.1"
 
+
 install_requires = [
     'setuptools',
     'jwcrypto',
     'pytz',
-    ]
+]
+
+
+test_requires = [
+    'six',
+]
+
 
 setup(
     name='cromlech.jwt',
@@ -35,5 +42,6 @@ setup(
     zip_safe=False,
     install_requires=install_requires,
     extras_require={
-        },
-    )
+        'test': test_requires,
+    },
+)
