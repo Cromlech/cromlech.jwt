@@ -63,12 +63,12 @@ class JWTHandler(object):
         payload = {
             'uid': self.generate_uid(),
         }
+        payload.update(data)
         if self.auto_timeout is not None:
             exp = get_posix_timestamp(
                 expiration_date(minutes=self.auto_timeout))
-            payload['exp'] = int(exp)
+            payload['exp'] = int(exp)  # We override the exp from data.
 
-        payload.update(data)
         return payload
 
     def create_signed_token(self, key, payload, alg="HS256"):
