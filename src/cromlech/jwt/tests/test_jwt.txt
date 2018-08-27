@@ -1,6 +1,3 @@
-JSON WEB Tokens for Cromlech
-****************************
-
 Prerequisite
 ============
 

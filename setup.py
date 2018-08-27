@@ -18,6 +18,13 @@ test_requires = [
 ]
 
 
+def desc(*paths):
+    desc = ""
+    for path in paths:
+        desc += open(path).read() + "\n"
+    return desc
+
+
 setup(
     name='cromlech.jwt',
     version=version,
@@ -26,8 +33,11 @@ setup(
     url='http://gitweb.dolmen-project.org',
     download_url='http://pypi.python.org/pypi/cromlech.jwt',
     description='JWT support for Cromlech',
-    long_description=(open("README.txt").read() + "\n" +
-                      open(os.path.join("docs", "HISTORY.txt")).read()),
+    long_description=desc(
+        "README.txt",
+        os.path.join("src", "cromlech", "jwt", "tests", "test_jwt.txt"),
+        os.path.join("docs", "HISTORY.txt")
+    ),
     license='ZPL',
     classifiers=[
         'Environment :: Web Environment',
