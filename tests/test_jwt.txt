@@ -60,9 +60,7 @@ to create your own token policy.
   >>> service.handler.auto_timeout
   60
 
-  >>> import six
   >>> token = service.generate(data)
-  >>> assert isinstance(token, six.string_types)
 
   >>> import json
   >>> token_data = handler.decrypt_and_verify(key, token)
@@ -110,4 +108,4 @@ an expiration date on your payload will generate an error:
   ...     token = service.generate(data)
 
   >>> payload_error.value
-  InvalidPayload('Expiration is not allowed.',)
+  InvalidPayload('Expiration is not allowed.')

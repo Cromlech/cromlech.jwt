@@ -3,18 +3,18 @@
 import os
 from setuptools import setup, find_packages
 
-version = "0.1"
+version = "0.2"
 
 
 install_requires = [
     'setuptools',
-    'jwcrypto',
+    'jwcrypto >= 1.4',
     'pytz',
 ]
 
 
 test_requires = [
-    'six',
+    'pytest',
 ]
 
 
@@ -35,7 +35,7 @@ setup(
     description='JWT support for Cromlech',
     long_description=desc(
         "README.txt",
-        os.path.join("src", "cromlech", "jwt", "tests", "test_jwt.txt"),
+        os.path.join("tests", "test_jwt.txt"),
         os.path.join("docs", "HISTORY.txt")
     ),
     license='ZPL',

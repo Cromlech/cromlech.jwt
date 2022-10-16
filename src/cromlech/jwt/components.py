@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-
 import uuid
 import json
 from .utils import get_posix_timestamp, expiration_date
-from jwcrypto import jwk, jwt
+from jwcrypto import jwk, jwt, jwe, jws
 from jwcrypto.common import json_decode
 from jwcrypto.jwe import InvalidJWEData
 from jwcrypto.jwt import JWTExpired
@@ -18,20 +16,20 @@ class TokenException(Exception):
 class InvalidToken(TokenException):
 
     def __str__(self):
-        return "Token %r could not be parse and/or interpreted." % self.token
+        return f"Token {self.token} could not be parse and/or interpreted."
 
 
 class ExpiredToken(TokenException):
 
     def __str__(self):
-        return "Token %r is expired." % self.token
+        return "Token {self.token} is expired."
 
 
 class InvalidPayload(Exception):
     pass
 
 
-class JWTHandler(object):
+class JWTHandler:
 
     @staticmethod
     def generate_uid():
@@ -73,7 +71,7 @@ class JWTHandler(object):
         return payload
 
     def create_signed_token(self, key, payload, alg="HS256"):
-        """Return an unserialized signed token. 
+        """Return an unserialized signed token.
         Signed with the given key (JWK object)
         """
         token = jwt.JWT(header={"alg": alg}, claims=payload)
@@ -91,7 +89,7 @@ class JWTHandler(object):
     def verify(self, key, serial):
         """Return the claims of a signed token.
         """
-        ET = jwt.JWT(key=key, jwt=serial)
+        ET = jwt.JWT(key=key, jwt=serial, expected_type="JWE")
         return ET.claims
 
     def decrypt_and_verify(self, key, serial):
@@ -105,7 +103,7 @@ class JWTHandler(object):
         return ST.claims
 
 
-class JWTService(object):
+class JWTService:
 
     def __init__(self, key, handler, lifetime=60, auto_deprecate=True):
         self.key = key
